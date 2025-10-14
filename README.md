@@ -1,6 +1,6 @@
 # xllify-build
 
-Companion action for [xllify.com](https://xllify.com), coming soon!
+Companion action for [xllify.com](https://xllify.com) - coming soon
 
 ## Overview
 
@@ -13,27 +13,32 @@ Here is a workflow to get you started with this action. It compiles [hello.luau]
 After the build has completed, it is downloaded to your workspace at the path held in `${{ steps.xllify.outputs.xll_path }}`. A common approach is to attach it to a release, as is done below.
 
 ```yaml
-name: Build XLL
+name: Demo XLL build
+
+permissions:
+  contents: write
 
 on:
-  push:
-    branches: [main]
+  release:
+    types: [published]
 
 jobs:
   build:
+    name: xllify and publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: xllify Remote Build
         id: xllify
-        uses: acornsoftuk/xllify-build@v1alpha
+        uses: acornsoftuk/xllify-build@v0.2.0-beta
         with:
           xll_filename: hello.xll
           luau_files: |
             hello.luau
+            the_answer.luau
           xllify_key: ${{ secrets.XLLIFY_KEY }}
 
-      # The .xll is now in your workspace!
+      # The built .xll is now in your workspace. It is common to upload it as a release.
 
       - name: Upload XLL to release
         if: startsWith(github.ref, 'refs/tags/')
@@ -58,7 +63,7 @@ Your xllify API key. Get this from app.xllify.com and add it to your repository 
 
 ### `xllify_api_endpoint` (optional)
 
-xllify build API endpoint URL. You won't need to change this.
+Optional. xllify build API endpoint URL. You won't need to change this unless using on-prem.
 
 ### `xll_filename` (required)
 
