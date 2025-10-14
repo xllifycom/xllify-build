@@ -53,6 +53,10 @@ jobs:
 
 ## Inputs
 
+### `xll_filename` (required)
+
+Output XLL filename (e.g., `my_addin.xll`).
+
 ### `luau_files` (required)
 
 Space or newline-separated list of Luau file paths relative to your repository root.
@@ -63,17 +67,13 @@ Your xllify API key. Get this from app.xllify.com and add it to your repository 
 
 ### `xllify_api_endpoint` (optional)
 
-Optional. xllify build API endpoint URL. You won't need to change this unless using on-prem.
-
-### `xll_filename` (required)
-
-Output XLL filename (e.g., `my_addin.xll`).
+xllify build API endpoint URL. You won't need to change this unless using on-prem.
 
 ## Outputs
 
 ### `xll_path`
 
-Path to the downloaded XLL file.
+Path to the built XLL file that has been downloaded to your workspace.
 
 ## Caveats
 
