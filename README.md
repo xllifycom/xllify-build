@@ -1,6 +1,6 @@
 # xllify-build
 
-Companion action for [xllify.com](https://xllify.com) - open beta
+Companion action for [xllify.com](https://xllify.com) - open beta, see [terms of service](https://xllify.com/terms.html)
 
 ## Overview
 
