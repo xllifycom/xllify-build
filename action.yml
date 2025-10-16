@@ -221,6 +221,8 @@ runs:
 
         if [ "$HTTP_CODE" -ne 200 ]; then
           echo "Error: API request failed with status $HTTP_CODE"
+          echo "Response body:"
+          echo "$JSON_RESPONSE"
           exit 1
         fi
 
