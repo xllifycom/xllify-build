@@ -205,7 +205,6 @@ runs:
         )
 
         echo "Submitting build to xllify API: ${{ inputs.xllify_api_endpoint }}"
-        echo "JSON body: $JSON_BODY"
 
         RESPONSE=$(curl -X POST "${{ inputs.xllify_api_endpoint }}/build" \
           -H "Authorization: Bearer ${{ inputs.xllify_key }}" \
@@ -219,7 +218,6 @@ runs:
         JSON_RESPONSE=$(echo "$RESPONSE" | sed '$d')
 
         echo "API Response (HTTP $HTTP_CODE):"
-        echo "$JSON_RESPONSE" | jq . || echo "$JSON_RESPONSE"
 
         if [ "$HTTP_CODE" -ne 200 ]; then
           echo "Error: API request failed with status $HTTP_CODE"
