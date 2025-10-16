@@ -8,7 +8,7 @@ Companion action for [xllify.com](https://xllify.com) - open beta, see [terms of
 
 To use this action, you need to [sign in to xllify](https://app.xllify.com) with your GitHub login. From there you can generate an API key use in the action, as detailed below.
 
-When running this action in your repo, the scripts are compiled, signed and submitted to the xllify build API. After a successful build, the .xll file is downloaded to your workspace for you to copy somewhere. In the below example it is simply attached as a workflow artifact.
+When running this action in your repo, the scripts are compiled, signed and submitted to the xllify build API. After a successful build, the .xll file is downloaded to your workspace for you to copy somewhere. In the below example it is attached to a release.
 
 ## Usage
 
@@ -81,4 +81,4 @@ Path to the built XLL file that has been downloaded to your workspace.
 
 ## Caveats
 
-- In alpha, built .xll files are not signed. This can trigger a warning. See https://support.microsoft.com/en-gb/topic/excel-is-blocking-untrusted-xll-add-ins-by-default-1e3752e2-1177-4444-a807-7b700266a6fb about ways to work around this for now
+- In alpha, built .xll files are not signed. This may trigger a warning when you load them into Excel. See https://support.microsoft.com/en-gb/topic/excel-is-blocking-untrusted-xll-add-ins-by-default-1e3752e2-1177-4444-a807-7b700266a6fb about ways to work around this for now.
