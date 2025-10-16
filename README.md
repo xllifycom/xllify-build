@@ -4,7 +4,7 @@ Companion action for [xllify.com](https://xllify.com) - open beta, see [terms of
 
 ## Overview
 
-[xllify.com](https://xllify.com) is easiest way to add custom functions to Microsoft Excel. It is a build API that takes scripts and makes them into custom functions packaged as an .xll Excel add-in.
+[xllify.com](https://xllify.com) is easiest way to add custom functions to Microsoft Excel. It is a build API that takes scripts and compiles them into custom functions packaged as an .xll Excel add-in. You can sell, distrbute and deploy this .xll however you wish.
 
 To use this action, you need to [sign in to xllify](https://app.xllify.com) with your GitHub login. From there you can generate an API key use in the action, as detailed below.
 
