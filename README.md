@@ -14,6 +14,8 @@ When running this action in your repo, the scripts are compiled, signed and subm
 
 Here is a workflow to get you started with this action. It compiles [hello.luau](./hello.luau) into a ready to run .xll add-in named `hello.xll`. You don't need to worry about a Windows runner to build this, it's all handled by xllify.
 
+To test out your scripts first (advisable), either use the [online editor](https://app.xllify.com/editor) or the [local environment](https://github.com/acornsoftuk/xllify-local).
+
 After the build has completed, it is downloaded to your workspace at the path held in `${{ steps.xllify.outputs.xll_path }}`. A common approach is to attach it to a release, as is done below.
 
 ```yaml
