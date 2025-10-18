@@ -35,6 +35,8 @@ runs:
         curl -L -o xllify-dist-v1.0.4-windows.zip "$DOWNLOAD_URL"
         unzip -q xllify-dist-v1.0.4-windows.zip -d xllify-dist
         echo "XLLIFY_DIST_PATH=${{ github.workspace }}/xllify-dist" >> $GITHUB_ENV
+        ls $XLLIFY_DIST_PATH
+        ls
 
     - name: Set up environment
       shell: bash
@@ -79,6 +81,7 @@ runs:
         EOF
 
         # Create build directory
+        cat CMakeLists.txt
         mkdir -p build
         cd build
         cmake ..
