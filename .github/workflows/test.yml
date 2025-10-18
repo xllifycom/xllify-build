@@ -15,7 +15,7 @@ jobs:
         id: xllify
         uses: ./
         with:
-          xll_filename: hello.xll
+          xll_filename: hello
           luau_scripts: |
             hello.luau
             the_answer.luau
