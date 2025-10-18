@@ -35,8 +35,10 @@ runs:
         curl -L -o xllify-dist-v1.0.4-windows.zip "$DOWNLOAD_URL"
         unzip -q xllify-dist-v1.0.4-windows.zip -d xllify-dist
         echo "XLLIFY_DIST_PATH=${{ github.workspace }}/xllify-dist" >> $GITHUB_ENV
+        echo "var"
         ls $XLLIFY_DIST_PATH
-        ls
+        echo "lit"
+        ls xllify-dist/
 
     - name: Set up environment
       shell: bash
@@ -53,6 +55,9 @@ runs:
         for script in $SCRIPTS; do
           SCRIPT_PATHS="$SCRIPT_PATHS    \${CMAKE_CURRENT_SOURCE_DIR}/$script"$'\n'
         done
+
+        echo "XLLIFY_DIST_PATH=${{ github.workspace }}/xllify-dist" >> $GITHUB_ENV
+        echo $GITHUB_ENV
 
         # Create CMakeLists.txt with provided parameters
         cat > CMakeLists.txt << 'EOF'
