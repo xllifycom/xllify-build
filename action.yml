@@ -67,7 +67,7 @@ runs:
         project(${{ inputs.addin_name }} VERSION 1.0.0 LANGUAGES CXX C)
 
         # Set the path to the xllify distribution
-        set(CMAKE_PREFIX_PATH "${{ github.workspace }}\\xllify-dist")
+        set(CMAKE_PREFIX_PATH "${WORKSPACE_UNIX}/xllify-dist")
 
         # Find the xllify package
         find_package(Xllify REQUIRED)
