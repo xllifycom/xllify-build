@@ -1,14 +1,12 @@
 name: Test xllify-build action
 
 on:
-  #release:
-  #  types: [published]
   workflow_dispatch:
 
 jobs:
   exercise-action:
     name: Exercise action
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -18,7 +16,7 @@ jobs:
         uses: ./
         with:
           xll_filename: hello.xll
-          luau_files: |
+          luau_scripts: |
             hello.luau
             the_answer.luau
           xllify_key: ${{ secrets.XLLIFY_KEY }}

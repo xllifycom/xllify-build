@@ -3,277 +3,119 @@ description: Prepares and submits Luau source files to the xllify.com build API.
 author: Acornsoft UK
 
 inputs:
-  luau_files:
-    description: "Space or newline-separated list of Luau file paths relative to repo root"
-    required: true
   xllify_key:
-    description: "Your xllify API key, get this from app.xllify.com"
-    required: true
-  xllify_api_endpoint:
-    description: "xllify build API endpoint URL"
+    description: "License key for xllify"
     required: false
-    default: "https://build-1.xllify.com/"
+    default: "early-adopter"
   xll_filename:
-    description: "Output XLL filename (e.g., my_addin.xll)"
+    description: "Name of the output XLL file (without extension)"
+    required: false
+    default: MyAddin
+  addin_name:
+    description: "Internal name for the add-in project"
+    required: false
+    default: MyAddin
+  luau_scripts:
+    description: "Space or newline separated list of Luau script filenames"
     required: true
 
 outputs:
-  build_archive:
-    description: "Path to the compressed build submission"
-    value: ${{ steps.compress.outputs.archive_path }}
   xll_path:
-    description: "Path to the downloaded XLL file"
-    value: ${{ steps.download.outputs.xll_path }}
+    description: "Path to the built XLL file (relative to workspace)"
+    value: ${{ steps.build.outputs.xll_path }}
 
 runs:
   using: "composite"
   steps:
-    - name: Setup tooling
+    - name: Download and extract xllify distribution
       shell: bash
       run: |
-        # Setup tooling
-        echo "::echo::off"
-        echo "::group::Setup tooling"
-        ACTION_PATH="${{ github.action_path }}"
-        chmod +x "${ACTION_PATH}/bin/linux/luau-analyze" "${ACTION_PATH}/bin/linux/luau-compile" "${ACTION_PATH}/bin/linux/luau-funcinfo"
-        sudo cp "${ACTION_PATH}/bin/linux/luau-analyze" "${ACTION_PATH}/bin/linux/luau-compile" "${ACTION_PATH}/bin/linux/luau-funcinfo" /usr/local/bin/
-        echo "xllify tooling installed"
-        mkdir -p build
-        echo "::endgroup::"
+        # Download and extract xllify distribution from GitHub releases
+        DOWNLOAD_URL="https://storage.googleapis.com/xllify-action-assets/xllify-dist-v1.0.4-windows.zip"
+        curl -L -o xllify-dist-v1.0.4-windows.zip "$DOWNLOAD_URL"
+        unzip -q xllify-dist-v1.0.4-windows.zip -d xllify-dist
+        echo "XLLIFY_DIST_PATH=${{ github.workspace }}/xllify-dist" >> $GITHUB_ENV
 
-    - name: Analyze Luau files
+    - name: Set up environment
       shell: bash
       run: |
-        # Analyze
-        echo "::echo::off"
-        echo "::group::Analyze Luau files"
-        # Normalize newlines to spaces for consistent parsing
-        NORMALIZED_FILES=$(echo "${{ inputs.luau_files }}" | tr '\n' ' ')
-        read -ra FILES <<< "$NORMALIZED_FILES"
+        echo "XLLIFY_KEY=${{ inputs.xllify_key }}" >> $GITHUB_ENV
 
-        for file in "${FILES[@]}"; do
-          if [ -z "$file" ]; then
-            continue
-          fi
-
-          echo "Analyzing: $file"
-
-          if [ ! -f "$file" ]; then
-            echo "Error: File not found in repository: $file"
-            exit 1
-          fi
-
-          temp_file="${file}.tmp"
-          echo 'local xllify = require("./xllify_stub")' > "$temp_file"
-          echo >> "$temp_file"
-          cat "$file" >> "$temp_file"
-          luau-analyze "$temp_file"
-          rm "$temp_file"
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: |
+        # Configure
+        SCRIPTS="${{ inputs.luau_scripts }}"
+        SCRIPT_PATHS=""
+        for script in $SCRIPTS; do
+          SCRIPT_PATHS="$SCRIPT_PATHS    \${CMAKE_CURRENT_SOURCE_DIR}/$script"$'\n'
         done
-        echo "::endgroup::"
 
-    - name: Compiling Luau to bytecode
-      shell: bash
-      run: |
-        # Compile
-        echo "::echo::off"
-        echo "::group::Compiling Luau to bytecode"
-        # Normalize newlines to spaces for consistent parsing
-        NORMALIZED_FILES=$(echo "${{ inputs.luau_files }}" | tr '\n' ' ')
-        read -ra FILES <<< "$NORMALIZED_FILES"
-        for file in "${FILES[@]}"; do
-          if [ -z "$file" ]; then
-            continue
-          fi
+        # Create CMakeLists.txt with provided parameters
+        cat > CMakeLists.txt << 'EOF'
+        cmake_minimum_required(VERSION 3.16)
+        project(${{ inputs.addin_name }} VERSION 1.0.0 LANGUAGES CXX C)
 
-          # Verify file exists in repo
-          if [ ! -f "$file" ]; then
-            echo "Error: File not found in repository: $file"
-            exit 1
-          fi
+        # Set the path to the xllify distribution
+        set(CMAKE_PREFIX_PATH "$XLLIFY_DIST_PATH")
 
-          base_name=$(basename "$file" .luau)
-          echo "Compiling $file..."
-          luau-compile --binary "$file" > "build/${base_name}.luauc"
+        # Find the xllify package
+        find_package(Xllify REQUIRED)
 
-          echo "Generating function metadata for $file..."
-          luau-funcinfo "$file" > "build/${base_name}_metadata.json"
-        done
-        echo "::endgroup::"
-
-    - name: Generate signatures
-      shell: bash
-      run: |
-        # Generate signatures
-        echo "::echo::off"
-        echo "::group::Generate signatures"
-        python3 << 'EOF'
-        import hmac
-        import hashlib
-        import os
-        from pathlib import Path
-
-        api_key = os.environ.get('XLLIFY_KEY', '')
-        run_id = os.environ.get('GITHUB_RUN_ID', '')
-        repository = os.environ.get('GITHUB_REPOSITORY', '')
-        commit_sha = os.environ.get('GITHUB_SHA', '')
-
-        if not api_key:
-            print("Error: XLLIFY_KEY not found")
-            exit(1)
-
-        if not run_id or not repository or not commit_sha:
-            print("Error: GitHub context variables not found")
-            exit(1)
-
-        build_dir = Path('build')
-        luauc_files = list(build_dir.glob('*.luauc'))
-
-        if not luauc_files:
-            print("Warning: No .luauc files found in build directory")
-
-        for luauc_file in luauc_files:
-            print(f"Generating signature for: {luauc_file.name}")
-
-            # Read the bytecode
-            with open(luauc_file, 'rb') as f:
-                bytecode = f.read()
-
-            metadata = f"{run_id}:{repository}:{commit_sha}:"
-
-            signature = hmac.new(
-                api_key.encode('utf-8'),
-                metadata.encode('utf-8') + bytecode,
-                hashlib.sha256
-            ).hexdigest()
-
-            # Write signature file with metadata:signature format
-            sig_file = luauc_file.with_suffix('.sig')
-            with open(sig_file, 'w') as f:
-                f.write(f"{metadata}{signature}")
-            print(f"Created .sig file: {sig_file.name}")
-
-        print(f"Generated {len(luauc_files)} signature(s)")
+        # Add your Luau scripts
+        xllify_add_scripts(
         EOF
-        echo "::endgroup::"
-      env:
-        XLLIFY_KEY: ${{ inputs.xllify_key }}
-        GITHUB_RUN_ID: ${{ github.run_id }}
-        GITHUB_REPOSITORY: ${{ github.repository }}
-        GITHUB_SHA: ${{ github.sha }}
 
-    - name: Compress build directory
-      id: compress
-      shell: bash
-      run: |
-        # Compress build directory
-        echo "::echo::off"
-        echo "::group::Compress build directory"
-        REPO_SAFE=$(echo "${{ github.repository }}" | tr '/' '-')
-        ARCHIVE_NAME="xlfy-${REPO_SAFE}-build-${{ github.run_id }}.tar.gz"
-        tar -czf "$ARCHIVE_NAME" -C build .
-        echo "archive_path=$ARCHIVE_NAME" >> $GITHUB_OUTPUT
-        echo "Created archive: $ARCHIVE_NAME"
-        echo "::endgroup::"
+        # Add script paths
+        echo "$SCRIPT_PATHS" >> CMakeLists.txt
 
-    - name: Submit build to xllify API
-      id: submit
-      shell: bash
-      run: |
-        # Submit build to xllify API
-        echo "::echo::off"
-        echo "::group::Submit build to xllify API"
-
-        # Create JSON body directly
-        JSON_BODY=$(python3 << 'EOF'
-        import json
-        import os
-
-        files_input = os.environ.get('LUAU_FILES', '')
-        # Split by whitespace and filter empty strings
-        files = [f.strip() for f in files_input.split() if f.strip()]
-
-        body = {
-            "owner": os.environ.get('OWNER', ''),
-            "repo": os.environ.get('REPO', ''),
-            "user_luau_files": files,
-            "xll_filename": os.environ.get('XLL_FILENAME', ''),
-            "commit_sha": os.environ.get('COMMIT_SHA', '')
-        }
-        print(json.dumps(body))
-        EOF
+        # Complete the CMakeLists.txt
+        cat >> CMakeLists.txt << 'EOF'
         )
 
-        echo "Submitting build to xllify API: ${{ inputs.xllify_api_endpoint }}"
+        # Build the Excel add-in (XLL)
+        xllify_build_xll(${{ inputs.xll_filename }})
+        EOF
 
-        RESPONSE=$(curl -X POST "${{ inputs.xllify_api_endpoint }}/build" \
-          -H "Authorization: Bearer ${{ inputs.xllify_key }}" \
-          -F "json=$JSON_BODY" \
-          -F "build_archive=@${{ steps.compress.outputs.archive_path }}" \
-          -w "\n%{http_code}" \
-          -s)
+        # Create build directory
+        mkdir -p build
+        cd build
+        cmake ..
 
-        # Extract HTTP status code from last line
-        HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
-        JSON_RESPONSE=$(echo "$RESPONSE" | sed '$d')
-
-        echo "API Response (HTTP $HTTP_CODE):"
-
-        if [ "$HTTP_CODE" -ne 200 ]; then
-          echo "Error: API request failed with status $HTTP_CODE"
-          echo "Response body:"
-          echo "$JSON_RESPONSE"
-          exit 1
-        fi
-
-        # Extract status and signed URL from response
-        STATUS=$(echo "$JSON_RESPONSE" | jq -r '.status')
-        SIGNED_URL=$(echo "$JSON_RESPONSE" | jq -r '.signed_url // empty')
-
-        if [ "$STATUS" != "completed" ]; then
-          MESSAGE=$(echo "$JSON_RESPONSE" | jq -r '.message // "Build did not complete successfully"')
-          echo "Error: Build status is '$STATUS' - $MESSAGE"
-          exit 1
-        fi
-
-        if [ -z "$SIGNED_URL" ]; then
-          echo "Error: No signed_url in response"
-          exit 1
-        fi
-
-        echo "Build completed successfully!"
-        echo "signed_url=$SIGNED_URL" >> $GITHUB_OUTPUT
-        echo "::endgroup::"
-      env:
-        LUAU_FILES: ${{ inputs.luau_files }}
-        OWNER: ${{ github.repository_owner }}
-        REPO: ${{ github.event.repository.name }}
-        XLL_FILENAME: ${{ inputs.xll_filename }}
-        COMMIT_SHA: ${{ github.sha }}
-
-    - name: Download built XLL
-      id: download
+    - name: Build XLL
+      id: build
       shell: bash
+      working-directory: ${{ github.action_path }}
       run: |
-        # Download built XLL
-        echo "::echo::off"
-        echo "::group::Download built XLL"
-        mkdir -p xllify-out
-        OUTPUT_PATH="xllify-out/${{ inputs.xll_filename }}"
+        # Build XLL
+        cd build
+        cmake --build . --config Release
 
-        echo "Downloading XLL from signed URL..."
-        curl -L -o "$OUTPUT_PATH" "${{ steps.submit.outputs.signed_url }}"
+        # Find the generated XLL file in build/Release/
+        XLL_FILE=$(find . -name "${{ inputs.xll_filename }}.xll" | head -n 1)
 
-        if [ ! -f "$OUTPUT_PATH" ]; then
-          echo "Error: Failed to download XLL file"
+        if [ -z "$XLL_FILE" ]; then
+          echo "Error: XLL file not found"
           exit 1
         fi
 
-        FILE_SIZE=$(stat -f%z "$OUTPUT_PATH" 2>/dev/null || stat -c%s "$OUTPUT_PATH" 2>/dev/null)
-        echo "Downloaded XLL: $OUTPUT_PATH (${FILE_SIZE} bytes)"
-        echo "xll_path=$OUTPUT_PATH" >> $GITHUB_OUTPUT
-        echo "::endgroup::"
+        # Copy XLL to action root
+        cp "$XLL_FILE" ../${{ inputs.xll_filename }}.xll
 
-branding:
-  icon: "package"
-  color: "blue"
+        # Set output path (relative to workspace)
+        RELATIVE_PATH="${{ github.action_path }}/${{ inputs.xll_filename }}.xll"
+        # Make it relative to GITHUB_WORKSPACE
+        WORKSPACE_RELATIVE=$(realpath --relative-to="${GITHUB_WORKSPACE}" "$RELATIVE_PATH" 2>/dev/null || echo "$RELATIVE_PATH")
+        echo "xll_path=$WORKSPACE_RELATIVE" >> $GITHUB_OUTPUT
+
+        echo "Built XLL: $WORKSPACE_RELATIVE"
+
+    - name: Clean up build directory
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      if: always()
+      run: |
+        # Remove build directory but keep the XLL
+        rm -rf build
+        echo "Build directory cleaned"
