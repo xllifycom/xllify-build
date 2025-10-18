@@ -65,10 +65,14 @@ runs:
         cat > CMakeLists.txt << 'EOF'
         cmake_minimum_required(VERSION 3.16)
         project(${{ inputs.addin_name }} VERSION 1.0.0 LANGUAGES CXX C)
+        EOF
 
+        cat >> CMakeLists.txt << EOF
         # Set the path to the xllify distribution
-        set(CMAKE_PREFIX_PATH "${WORKSPACE_UNIX}/xllify-dist")
+        set(CMAKE_PREFIX_PATH "WORKSPACE_UNIX\\xllify-dist")
+        EOF
 
+        cat >> CMakeLists.txt << 'EOF'
         # Find the xllify package
         find_package(Xllify REQUIRED)
 
