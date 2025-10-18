@@ -31,14 +31,10 @@ runs:
       shell: bash
       run: |
         # Download and extract xllify distribution from GitHub releases
-        DOWNLOAD_URL="https://storage.googleapis.com/xllify-action-assets/xllify-dist-v1.0.4-windows.zip"
-        curl -L -o xllify-dist-v1.0.4-windows.zip "$DOWNLOAD_URL"
-        unzip -q xllify-dist-v1.0.4-windows.zip -d xllify-dist
+        DOWNLOAD_URL="https://storage.googleapis.com/xllify-action-assets/xllify-dist-v1.0.9-windows.zip"
+        curl -L -o xllify-dist-v1.0.9-windows.zip "$DOWNLOAD_URL"
+        unzip -q xllify-dist-v1.0.9-windows.zip -d xllify-dist
         echo "XLLIFY_DIST_PATH=${{ github.workspace }}/xllify-dist" >> $GITHUB_ENV
-        echo "var"
-        ls $XLLIFY_DIST_PATH
-        echo "lit"
-        ls xllify-dist/
 
     - name: Set up environment
       shell: bash
@@ -53,7 +49,6 @@ runs:
         WORKSPACE="${{ github.workspace }}"
         WORKSPACE_UNIX="${WORKSPACE//\\//}"
         echo "WORKSPACE_UNIX=$WORKSPACE_UNIX" >> $GITHUB_ENV
-        echo $WORKSPACE_UNIX
 
         SCRIPTS="${{ inputs.luau_scripts }}"
         SCRIPT_PATHS=""
