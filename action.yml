@@ -69,7 +69,7 @@ runs:
 
         cat >> CMakeLists.txt << EOF
         # Set the path to the xllify distribution
-        set(CMAKE_PREFIX_PATH "WORKSPACE_UNIX\\xllify-dist")
+        set(CMAKE_PREFIX_PATH "${WORKSPACE_UNIX}/xllify-dist")
         EOF
 
         cat >> CMakeLists.txt << 'EOF'
