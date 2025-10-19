@@ -1,6 +1,9 @@
 name: xllify build
-description: Prepares and submits Luau source files to the xllify.com build API.
+description: xllify is easiest way to add custom functions to Microsoft Excel. It takes functions implemented in Luau scripts and compiles them into custom functions packaged as an .xll Excel add-in.
 author: Acornsoft UK
+branding:
+  icon: "package"
+  color: "green"
 
 inputs:
   xllify_key:

@@ -72,4 +72,4 @@ Path to the built XLL file that has been downloaded to your workspace.
 
 ## Caveats
 
-- .xll files are not signed. This may trigger a warning when you load them into Excel, depending upon your environment. See https://support.microsoft.com/en-gb/topic/excel-is-blocking-untrusted-xll-add-ins-by-default-1e3752e2-1177-4444-a807-7b700266a6fb about ways to work around this for now. Support using your own signing certificates is coming soon.
+- .xll files are not signed. This may trigger a warning when you load them into Excel, depending upon your environment. See https://support.microsoft.com/en-gb/topic/excel-is-blocking-untrusted-xll-add-ins-by-default-1e3752e2-1177-4444-a807-7b700266a6fb about ways to work around this for now. Support using your own signing certificates is coming soon, or you can of course handle this yourself in your workflow.
