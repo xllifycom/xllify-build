@@ -53,7 +53,7 @@ runs:
         SCRIPTS="${{ inputs.luau_scripts }}"
         SCRIPT_PATHS=""
         for script in $SCRIPTS; do
-          SCRIPT_PATHS="$SCRIPT_PATHS    \${CMAKE_CURRENT_SOURCE_DIR}/$script"$'\n'
+          SCRIPT_PATHS="$SCRIPT_PATHS    \${CMAKE_SOURCE_DIR}/$script"$'\n'
         done
 
         # Create CMakeLists.txt with provided parameters
