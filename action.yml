@@ -43,7 +43,7 @@ runs:
 
     - name: Configure CMake
       shell: bash
-      working-directory: ${{ github.action_path }}
+      working-directory: ${{ github.workspace }}
       run: |
         # Configure
         WORKSPACE="${{ github.workspace }}"
@@ -53,7 +53,7 @@ runs:
         SCRIPTS="${{ inputs.luau_scripts }}"
         SCRIPT_PATHS=""
         for script in $SCRIPTS; do
-          SCRIPT_PATHS="$SCRIPT_PATHS    \${CMAKE_SOURCE_DIR}/$script"$'\n'
+          SCRIPT_PATHS="$SCRIPT_PATHS    $WORKSPACE_UNIX/$script"$'\n'
         done
 
         # Create CMakeLists.txt with provided parameters
@@ -95,7 +95,7 @@ runs:
     - name: Build XLL
       id: build
       shell: bash
-      working-directory: ${{ github.action_path }}
+      working-directory: ${{ github.workspace }}
       run: |
         # Build XLL
         cd build
@@ -109,20 +109,17 @@ runs:
           exit 1
         fi
 
-        # Copy XLL to action root
+        # Copy XLL to workspace root
         cp "$XLL_FILE" ../${{ inputs.xll_filename }}.xll
 
         # Set output path (relative to workspace)
-        RELATIVE_PATH="${{ github.action_path }}/${{ inputs.xll_filename }}.xll"
-        # Make it relative to GITHUB_WORKSPACE
-        WORKSPACE_RELATIVE=$(realpath --relative-to="${GITHUB_WORKSPACE}" "$RELATIVE_PATH" 2>/dev/null || echo "$RELATIVE_PATH")
-        echo "xll_path=$WORKSPACE_RELATIVE" >> $GITHUB_OUTPUT
+        echo "xll_path=${{ inputs.xll_filename }}.xll" >> $GITHUB_OUTPUT
 
-        echo "Built XLL: $WORKSPACE_RELATIVE"
+        echo "Built XLL: ${{ inputs.xll_filename }}.xll"
 
     - name: Clean up build directory
       shell: bash
-      working-directory: ${{ github.action_path }}
+      working-directory: ${{ github.workspace }}
       if: always()
       run: |
         # Remove build directory but keep the XLL
