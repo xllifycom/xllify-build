@@ -31,9 +31,9 @@ runs:
       shell: bash
       run: |
         # Download and extract xllify distribution from GitHub releases
-        DOWNLOAD_URL="https://storage.googleapis.com/xllify-action-assets/xllify-dist-v1.0.9-windows.zip"
-        curl -L -o xllify-dist-v1.0.9-windows.zip "$DOWNLOAD_URL"
-        unzip -q xllify-dist-v1.0.9-windows.zip -d xllify-dist
+        DOWNLOAD_URL="https://storage.googleapis.com/xllify-action-assets/xllify-dist-v1.0.10-windows.zip"
+        curl -L -o xllify-dist-v1.0.10-windows.zip "$DOWNLOAD_URL"
+        unzip -q xllify-dist-v1.0.10-windows.zip -d xllify-dist
         echo "XLLIFY_DIST_PATH=${{ github.workspace }}/xllify-dist" >> $GITHUB_ENV
 
     - name: Set up environment
