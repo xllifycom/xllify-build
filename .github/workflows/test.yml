@@ -19,6 +19,7 @@ jobs:
           luau_scripts: |
             hello.luau
             the_answer.luau
+            black_scholes.luau
           xllify_key: not-needed
 
       - name: Upload XLL to release

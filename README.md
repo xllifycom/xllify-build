@@ -16,7 +16,7 @@ Drop an email to [support@xllify.com](mailto:support@xllify.com).
 
 ## Usage
 
-Here is a workflow to get you started with this action. It compiles [hello.luau](./hello.luau) and [the_answer.luau](./the_answer.luau) into a ready to run .xll add-in named `hello.xll`. 
+Here is a workflow to get you started with this action. It compiles [hello.luau](./hello.luau) and [the_answer.luau](./the_answer.luau) into a ready to run .xll add-in named `hello.xll`.
 
 To test out your scripts first (advisable), either use the [online editor](https://app.xllify.com/editor) or the [local environment](https://github.com/acornsoftuk/xllify-local).
 
@@ -39,12 +39,13 @@ jobs:
 
       - name: Build XLL with xllify
         id: xllify
-        uses: acornsoftuk/xllify-build@main
+        uses: acornsoftuk/xllify-build@main # or @vX
         with:
           xll_filename: hello.xll
           luau_scripts: |
             hello.luau
             the_answer.luau
+            black_scholes.luau
           xllify_key: ${{ secrets.XLLIFY_KEY }}
 
       - name: Upload XLL to release
@@ -62,10 +63,6 @@ Output XLL filename (e.g., `my_addin.xll`).
 ### `luau_scripts` (required)
 
 Space or newline-separated list of Luau file paths relative to your repository root.
-
-### `xllify_key` (required)
-
-Your xllify API key. Get this from app.xllify.com and add it to your repository secrets.
 
 ## Outputs
 
