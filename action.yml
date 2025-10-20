@@ -9,7 +9,7 @@ inputs:
   xllify_version:
     description: "Version of xllify to use (e.g., 1.0.10)"
     required: false
-    default: "1.0.25"
+    default: "1.0.26"
   xllify_key:
     description: "License key for xllify"
     required: false
@@ -55,7 +55,7 @@ runs:
       working-directory: ${{ github.workspace }}
       run: |
         # Check if tests directory exists and contains at least one .luau file
-        if [ -d "tests" ] && [ -n "$(find tests -maxdepth 1 -name '*.luau' -print -quit)" ]; then
+        if [ -d "tests" ] && [ -n "$(find tests -maxdepth 1 -name 'test_*.luau' -print -quit)" ]; then
           echo "Running tests..."
           # Build load flags for source files
           LOAD_FLAGS=""
@@ -65,7 +65,9 @@ runs:
             LOAD_FLAGS="$LOAD_FLAGS --load $script"
           done
           echo $LOAD_FLAGS
-          "${{ github.workspace }}/xllify-dist/tools/xllify" $LOAD_FLAGS test tests/*.luau
+          # List all test_*.luau files explicitly
+          TEST_FILES=$(find tests -maxdepth 1 -name "test_*.luau" -type f | sort | tr '\n' ' ')
+          "${{ github.workspace }}/xllify-dist/tools/xllify" $LOAD_FLAGS test $TEST_FILES
         else
           echo "No tests directory or .luau files found in tests/, skipping tests"
         fi
