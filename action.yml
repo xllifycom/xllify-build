@@ -68,7 +68,7 @@ runs:
           echo $LOAD_FLAGS
           # List all test_*.luau files explicitly
           TEST_FILES=$(find tests -maxdepth 1 -name "test_*.luau" -type f | sort | tr '\n' ' ')
-          "${{ github.workspace }}/xllify-dist/tools/xllify" $LOAD_FLAGS --junit test $TEST_FILES > ${{ github.workspace }}/test-output.xml
+          "${{ github.workspace }}/xllify-dist/tools/xllify" $LOAD_FLAGS --junit test $TEST_FILES > "${{ github.workspace }}/test-output.xml"
         else
           echo "No tests directory or .luau files found in tests/, skipping tests"
           echo "TESTS_FOUND=false" >> $GITHUB_ENV
