@@ -59,7 +59,9 @@ runs:
           echo "Running tests..."
           # Build load flags for source files
           LOAD_FLAGS=""
-          for script in ${{ inputs.luau_scripts }}; do
+          # Normalize luau_scripts to handle both space and newline separated values
+          SCRIPTS=$(echo "${{ inputs.luau_scripts }}" | tr '\n' ' ')
+          for script in $SCRIPTS; do
             LOAD_FLAGS="$LOAD_FLAGS --load $script"
           done
           "${{ github.workspace }}/xllify-dist/tools/xllify" $LOAD_FLAGS --junit test tests/*.luau > test-results.xml
