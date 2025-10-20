@@ -30,6 +30,9 @@ outputs:
   xll_path:
     description: "Path to the built XLL file (relative to workspace)"
     value: ${{ steps.build.outputs.xll_path }}
+  test_results_path:
+    description: "Path to test results XML"
+    value: ${{ steps.build.outputs.test_results_path }}
 
 runs:
   using: "composite"
