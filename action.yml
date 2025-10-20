@@ -65,10 +65,9 @@ runs:
           for script in $SCRIPTS; do
             LOAD_FLAGS="$LOAD_FLAGS --load $script"
           done
-          echo $LOAD_FLAGS
           # List all test_*.luau files explicitly
           TEST_FILES=$(find tests -maxdepth 1 -name "test_*.luau" -type f | sort | tr '\n' ' ')
-          "${{ github.workspace }}/xllify-dist/tools/xllify" $LOAD_FLAGS test $TEST_FILES
+          "${{ github.workspace }}/xllify-dist/tools/xllify" $LOAD_FLAGS test --junit $TEST_FILES > "${{ github.workspace }}/test-results.xml"
         else
           echo "No tests directory or .luau files found in tests/, skipping tests"
           echo "TESTS_FOUND=false" >> $GITHUB_ENV
@@ -147,6 +146,8 @@ runs:
 
         # Set output path (relative to workspace)
         echo "xll_path=${{ inputs.xll_filename }}.xll" >> $GITHUB_OUTPUT
+        echo "test_results_path=${{ github.workspace }}/test-results.xml" >> $GITHUB_OUTPUT
+
         echo "Built XLL: ${{ inputs.xll_filename }}.xll"
 
     - name: Clean up build directory
@@ -154,6 +155,7 @@ runs:
       working-directory: ${{ github.workspace }}
       if: always()
       run: |
-        # Remove build directory but keep the XLL
+        # Tidy up
         rm -rf build
+        rm -rf "${{ github.workspace }}/xllify-dist"
         echo "Build directory cleaned"
