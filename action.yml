@@ -65,7 +65,7 @@ runs:
             LOAD_FLAGS="$LOAD_FLAGS --load $script"
           done
           echo $LOAD_FLAGS
-          "${{ github.workspace }}/xllify-dist/tools/xllify" $LOAD_FLAGS --junit test tests/*.luau > test-results.xml
+          "${{ github.workspace }}/xllify-dist/tools/xllify" $LOAD_FLAGS test tests/*.luau
         else
           echo "No tests directory or .luau files found in tests/, skipping tests"
         fi
