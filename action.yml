@@ -69,17 +69,11 @@ runs:
           # List all test_*.luau files explicitly
           TEST_FILES=$(find tests -maxdepth 1 -name "test_*.luau" -type f | sort | tr '\n' ' ')
           "${{ github.workspace }}/xllify-dist/tools/xllify" $LOAD_FLAGS --junit test $TEST_FILES > "${{ github.workspace }}/test-output.xml"
+          cat "${{ github.workspace }}/test-output.xml"
         else
           echo "No tests directory or .luau files found in tests/, skipping tests"
           echo "TESTS_FOUND=false" >> $GITHUB_ENV
         fi
-
-    - name: Publish test results
-      if: always() && env.TESTS_FOUND == 'true'
-      uses: EnricoMi/publish-unit-test-result-action/windows@v2
-      with:
-        files: ${{ github.workspace }}/test-output.xml
-        check_name: Unit test results
 
     - name: Configure CMake
       shell: bash
@@ -154,7 +148,9 @@ runs:
 
         # Set output path (relative to workspace)
         echo "xll_path=${{ inputs.xll_filename }}.xll" >> $GITHUB_OUTPUT
+        echo "tests_junit_xml_path=${{ github.workspace }}/test-output.xml" >> $GITHUB_OUTPUT
 
+        echo "Tests output: ${{ github.workspace }}/test-output.xml"
         echo "Built XLL: ${{ inputs.xll_filename }}.xll"
 
     - name: Clean up build directory
