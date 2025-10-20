@@ -1,11 +1,15 @@
-name: xllify build
-description: xllify is easiest way to add custom functions to Microsoft Excel.
+name: xllify Build
+description: Fast custom functions for Excel. .luau -> .xll in under a minute
 author: Acornsoft UK
 branding:
   icon: "package"
   color: "green"
 
 inputs:
+  xllify_version:
+    description: "Version of xllify to use (e.g., 1.0.10)"
+    required: false
+    default: "1.0.18"
   xllify_key:
     description: "License key for xllify"
     required: false
@@ -33,10 +37,12 @@ runs:
     - name: Download and extract xllify distribution
       shell: bash
       run: |
-        # Download and extract xllify distribution from GitHub releases
-        DOWNLOAD_URL="https://storage.googleapis.com/xllify-action-assets/xllify-dist-v1.0.10-windows.zip"
-        curl -L -o xllify-dist-v1.0.10-windows.zip "$DOWNLOAD_URL"
-        unzip -q xllify-dist-v1.0.10-windows.zip -d xllify-dist
+        # Download and extract xllify distribution
+        VERSION="${{ inputs.xllify_version }}"
+        DOWNLOAD_URL="https://storage.googleapis.com/xllify-action-assets/xllify-dist-v${VERSION}-windows.zip"
+        FILENAME="xllify-dist-v${VERSION}-windows.zip"
+        curl -L -o "$FILENAME" "$DOWNLOAD_URL"
+        unzip -q "$FILENAME" -d xllify-dist
         echo "XLLIFY_DIST_PATH=${{ github.workspace }}/xllify-dist" >> $GITHUB_ENV
 
     - name: Set up environment
