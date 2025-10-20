@@ -57,7 +57,12 @@ runs:
         # Check if tests directory exists and contains at least one .luau file
         if [ -d "tests" ] && [ -n "$(find tests -maxdepth 1 -name '*.luau' -print -quit)" ]; then
           echo "Running tests..."
-          "${{ github.workspace }}/xllify-dist/tools/xllify" --junit test tests/*.luau > test-results.xml
+          # Build load flags for source files
+          LOAD_FLAGS=""
+          for script in ${{ inputs.luau_scripts }}; do
+            LOAD_FLAGS="$LOAD_FLAGS --load $script"
+          done
+          "${{ github.workspace }}/xllify-dist/tools/xllify" $LOAD_FLAGS --junit test tests/*.luau > test-results.xml
         else
           echo "No tests directory or .luau files found in tests/, skipping tests"
         fi
