@@ -64,16 +64,11 @@ runs:
           for script in $SCRIPTS; do
             LOAD_FLAGS="$LOAD_FLAGS --load $script"
           done
+          echo $LOAD_FLAGS
           "${{ github.workspace }}/xllify-dist/tools/xllify" $LOAD_FLAGS --junit test tests/*.luau > test-results.xml
         else
           echo "No tests directory or .luau files found in tests/, skipping tests"
         fi
-
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      if: always() && hashFiles('test-results.xml') != ''
-      with:
-        files: test-results.xml
 
     - name: Configure CMake
       shell: bash
