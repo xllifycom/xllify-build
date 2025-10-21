@@ -8,6 +8,8 @@ Companion action for [xllify.com](https://xllify.com) - open beta, see [terms of
 
 Note that currently only Microsoft Excel on Windows is supported. Mac support will involve some (!) compromises, but may follow if there's demand.
 
+There's a [starter template repository](https://github.com/acornsoftuk/xllify-starter) to help you get started in under a minute.
+
 ## Support
 
 Drop an email to [support@xllify.com](mailto:support@xllify.com).
