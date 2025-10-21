@@ -16,6 +16,7 @@ jobs:
         uses: ./
         with:
           xll_filename: hello
+          xllify_version: 0.3.41
           luau_scripts: |
             hello.luau
             the_answer.luau
