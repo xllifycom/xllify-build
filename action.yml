@@ -7,9 +7,9 @@ branding:
 
 inputs:
   xllify_version:
-    description: "Version of xllify to use (e.g., 1.0.10)"
+    description: "Version of xllify to use"
     required: false
-    default: "1.0.26"
+    default: "0.3.40"
   xllify_key:
     description: "License key for xllify"
     required: false
