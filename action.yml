@@ -9,7 +9,7 @@ inputs:
   xllify_version:
     description: "Version of xllify to use"
     required: false
-    default: "0.3.41"
+    default: "0.3.42"
   xllify_key:
     description: "License key for xllify"
     required: false

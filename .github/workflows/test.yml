@@ -2,6 +2,12 @@ name: Test xllify-build action
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+  pull_request:
 
 jobs:
   exercise-action:
@@ -16,18 +22,12 @@ jobs:
         uses: ./
         with:
           xll_filename: hello
-          xllify_version: 0.3.41
+          xllify_version: 0.3.42
           luau_scripts: |
             hello.luau
             the_answer.luau
             black_scholes.luau
           xllify_key: not-needed
-
-      - name: Upload XLL to release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ${{ steps.xllify.outputs.xll_path }}
 
       - name: Upload XLL artifact
         uses: actions/upload-artifact@v4
