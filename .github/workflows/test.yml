@@ -22,7 +22,7 @@ jobs:
         uses: ./
         with:
           xll_filename: hello
-          xllify_version: 0.3.51
+          xllify_version: 0.3.52
           luau_scripts: |
             hello.luau
             the_answer.luau
