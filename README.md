@@ -4,7 +4,7 @@
 
 Note that currently only Microsoft Excel on Windows is supported. Mac support will involve some (!) compromises, but may follow if there's demand.
 
-There's a [starter template repository](https://github.com/acornsoftuk/xllify-starter) to help you get started in under a minute.
+There's a [starter template repository](https://github.com/acornsoftuk/xllify-starter) to help you get started in under a minute, and more examples in the [demo repository](https://github.com/acornsoftuk/xllify-demo).
 
 ## Support
 
