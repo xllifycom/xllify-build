@@ -46,11 +46,9 @@ runs:
         FILENAME="xllify-dist-v${VERSION}-windows.zip"
         echo $FILENAME
         curl -L -o "$FILENAME" "$DOWNLOAD_URL"
+        echo $DOWNLOAD_URL
         unzip -q "$FILENAME" -d xllify-dist
         echo "XLLIFY_DIST_PATH=${{ github.workspace }}/xllify-dist" >> $GITHUB_ENV
-
-        ls D:\a\xllify-build\xllify-build\xllify-dist\
-        ls D:\a\xllify-build\xllify-build\xllify-dist\lib
 
     - name: Set up environment
       shell: bash
