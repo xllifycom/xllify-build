@@ -44,9 +44,7 @@ runs:
         VERSION="${{ inputs.xllify_version }}"
         DOWNLOAD_URL="https://storage.googleapis.com/xllify-action-assets/xllify-dist-v${VERSION}-windows.zip"
         FILENAME="xllify-dist-v${VERSION}-windows.zip"
-        echo $FILENAME
         curl -L -o "$FILENAME" "$DOWNLOAD_URL"
-        echo $DOWNLOAD_URL
         unzip -q "$FILENAME" -d xllify-dist
         echo "XLLIFY_DIST_PATH=${{ github.workspace }}/xllify-dist" >> $GITHUB_ENV
 
@@ -63,10 +61,6 @@ runs:
         WORKSPACE="${{ github.workspace }}"
         WORKSPACE_UNIX="${WORKSPACE//\\//}"
         echo "WORKSPACE_UNIX=$WORKSPACE_UNIX" >> $GITHUB_ENV
-        echo $WORKSPACE_UNIX
-
-        ls "$WORKSPACE_UNIX/xllify-dist/lib"
-        ls "$WORKSPACE_UNIX/xllify-dist/"
 
         SCRIPTS="${{ inputs.luau_scripts }}"
         SCRIPT_PATHS=""
@@ -104,10 +98,7 @@ runs:
         xllify_build_xll(${{ inputs.xll_filename }})
         EOF
 
-        cat CMakeLists.txt
-
         # Create build directory
-        cat CMakeLists.txt
         mkdir -p build
         cd build
         cmake ..
