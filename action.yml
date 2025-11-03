@@ -49,6 +49,8 @@ runs:
         unzip -q "$FILENAME" -d xllify-dist
         echo "XLLIFY_DIST_PATH=${{ github.workspace }}/xllify-dist" >> $GITHUB_ENV
 
+        ls $XLLIFY_DIST_PATH/lib
+
     - name: Set up environment
       shell: bash
       run: |
