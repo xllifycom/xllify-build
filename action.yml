@@ -65,7 +65,7 @@ runs:
         echo "WORKSPACE_UNIX=$WORKSPACE_UNIX" >> $GITHUB_ENV
         echo $WORKSPACE_UNIX
 
-        ls "$WORKSPACE_UNIX/lib"
+        ls "$WORKSPACE_UNIX/xllify-dist/lib"
 
         SCRIPTS="${{ inputs.luau_scripts }}"
         SCRIPT_PATHS=""
