@@ -1,10 +1,6 @@
 # xllify-build
 
-Companion action for [xllify.com](https://xllify.com) - open beta, see [terms of service](https://xllify.com/terms.html)
-
-## Overview
-
-[xllify.com](https://xllify.com) is easiest way to add custom functions to Microsoft Excel. It takes functions implemented in Luau scripts and compiles them into custom functions packaged as an .xll Excel add-in. You can sell, distribute and deploy this .xll however you wish.
+[xllify.com](https://xllify.com) is easiest way to add very high performance custom functions to Microsoft Excel. It takes functions implemented as Luau scripts and compiles them into custom functions packaged as an .xll Excel add-in. You can sell, distribute and deploy this .xll however you wish.
 
 Note that currently only Microsoft Excel on Windows is supported. Mac support will involve some (!) compromises, but may follow if there's demand.
 
@@ -16,9 +12,7 @@ Drop an email to [support@xllify.com](mailto:support@xllify.com).
 
 ## Usage
 
-Here is a workflow to get you started with this action. It compiles [hello.luau](./hello.luau) and [the_answer.luau](./the_answer.luau) into a ready to run .xll add-in named `hello.xll`.
-
-To test out your scripts first (advisable), download the [local environment](https://github.com/acornsoftuk/xllify-cli) for Mac or Windows.
+Here is a workflow to get you started with this action. It compiles [black_scholes.luau], [hello.luau](./hello.luau) and [the_answer.luau](./the_answer.luau) into a ready to run .xll add-in named `hello.xll`.
 
 After the build has completed, it is available in your workspace at the path held in `${{ steps.xllify.outputs.xll_path }}`. A common approach is to attach it to a release, as is done below.
 
@@ -39,7 +33,7 @@ jobs:
 
       - name: Build XLL with xllify
         id: xllify
-        uses: acornsoftuk/xllify-build@main # or @vX
+        uses: acornsoftuk/xllify-build@v0.0.0 # use version
         with:
           xll_filename: hello.xll
           luau_scripts: |
