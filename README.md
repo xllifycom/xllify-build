@@ -12,7 +12,7 @@ Drop an email to [support@xllify.com](mailto:support@xllify.com).
 
 ## Usage
 
-Here is a workflow to get you started with this action. It compiles [black_scholes.luau], [hello.luau](./hello.luau) and [the_answer.luau](./the_answer.luau) into a ready to run .xll add-in named `hello.xll`.
+Here is a workflow to get you started with this action. It compiles [black_scholes.luau](./black_scholes.luau), [hello.luau](./hello.luau) and [the_answer.luau](./the_answer.luau) into a ready to run .xll add-in named `hello.xll`.
 
 After the build has completed, it is available in your workspace at the path held in `${{ steps.xllify.outputs.xll_path }}`. A common approach is to attach it to a release, as is done below.
 
