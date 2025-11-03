@@ -44,6 +44,7 @@ runs:
         VERSION="${{ inputs.xllify_version }}"
         DOWNLOAD_URL="https://storage.googleapis.com/xllify-action-assets/xllify-dist-v${VERSION}-windows.zip"
         FILENAME="xllify-dist-v${VERSION}-windows.zip"
+        echo $FILENAME
         curl -L -o "$FILENAME" "$DOWNLOAD_URL"
         unzip -q "$FILENAME" -d xllify-dist
         echo "XLLIFY_DIST_PATH=${{ github.workspace }}/xllify-dist" >> $GITHUB_ENV
@@ -97,6 +98,8 @@ runs:
         # Build the Excel add-in (XLL)
         xllify_build_xll(${{ inputs.xll_filename }})
         EOF
+
+        cat CMakeLists.txt
 
         # Create build directory
         cat CMakeLists.txt
