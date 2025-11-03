@@ -1,5 +1,5 @@
 name: xllify Build
-description: Builds Excel custom functions from .luau to .xll in under a minute
+description: Builds Excel custom functions from .luau to .xll
 author: Acornsoft UK
 branding:
   icon: "package"
@@ -9,7 +9,7 @@ inputs:
   xllify_version:
     description: "Version of xllify to use"
     required: false
-    default: "0.3.52"
+    default: "0.4.11"
   xllify_key:
     description: "License key for xllify"
     required: false
@@ -52,29 +52,6 @@ runs:
       shell: bash
       run: |
         echo "XLLIFY_KEY=${{ inputs.xllify_key }}" >> $GITHUB_ENV
-
-    - name: Run tests
-      shell: bash
-      working-directory: ${{ github.workspace }}
-      run: |
-        # Check if tests directory exists and contains at least one .luau file
-        if [ -d "tests" ] && [ -n "$(find tests -maxdepth 1 -name 'test_*.luau' -print -quit)" ]; then
-          echo "Running tests..."
-          echo "TESTS_FOUND=true" >> $GITHUB_ENV
-          # Build load flags for source files
-          LOAD_FLAGS=""
-          # Normalize luau_scripts to handle both space and newline separated values
-          SCRIPTS=$(echo "${{ inputs.luau_scripts }}" | tr '\n' ' ')
-          for script in $SCRIPTS; do
-            LOAD_FLAGS="$LOAD_FLAGS --load $script"
-          done
-          # List all test_*.luau files explicitly
-          TEST_FILES=$(find tests -maxdepth 1 -name "test_*.luau" -type f | sort | tr '\n' ' ')
-          "${{ github.workspace }}/xllify-dist/tools/xllify" --junit $LOAD_FLAGS test $TEST_FILES > "${{ github.workspace }}/test-results.xml"
-        else
-          echo "No tests directory or .luau files found in tests/, skipping tests"
-          echo "TESTS_FOUND=false" >> $GITHUB_ENV
-        fi
 
     - name: Configure CMake
       shell: bash
@@ -149,7 +126,6 @@ runs:
 
         # Set output path (relative to workspace)
         echo "xll_path=${{ inputs.xll_filename }}.xll" >> $GITHUB_OUTPUT
-        echo "test_results_path=${{ github.workspace }}/test-results.xml" >> $GITHUB_OUTPUT
 
         echo "Built XLL: ${{ inputs.xll_filename }}.xll"
 
