@@ -1,6 +1,6 @@
 # xllify-build
 
-[xllify.com](https://xllify.com) is easiest way to add very high performance custom functions to Microsoft Excel. It takes functions implemented as Luau scripts and compiles them into custom functions packaged as an .xll Excel add-in. You can sell, distribute and deploy this .xll however you wish.
+[xllify.com](https://xllify.com) is the easiest way to add very high performance custom functions to Microsoft Excel. It takes functions implemented as Luau scripts and compiles them into custom functions packaged as an .xll Excel add-in. You can sell, distribute and deploy this .xll however you wish.
 
 Note that currently only Microsoft Excel on Windows is supported. Mac support will involve some (!) compromises, but may follow if there's demand.
 
