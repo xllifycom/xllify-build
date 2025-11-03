@@ -62,8 +62,56 @@ xllify.ExcelFunction({
 xllify.ExcelFunction({
     name = "bs.Put",
     description = "Black-Scholes put option price"
- }, 
+ },
     function (S: number, K: number, T: number, r: number, sigma: number): number
         return blackScholes(S, K, T, r, sigma, "put")
+    end
+)
+
+-- Determine market state from call and put prices
+local function getMarketState(callPrice: number, putPrice: number, S: number, K: number, T: number, r: number): string
+    -- Calculate put-call parity: C - P = S - K*e^(-rT)
+    local theoreticalDiff = S - K * math.exp(-r * T)
+    local actualDiff = callPrice - putPrice
+    local parityDeviation = math.abs(actualDiff - theoreticalDiff)
+
+    -- Determine moneyness
+    local moneyness = S / K
+    local state = ""
+
+    if moneyness > 1.05 then
+        state = "Deep ITM Call / OTM Put"
+    elseif moneyness > 1.01 then
+        state = "ITM Call / OTM Put"
+    elseif moneyness >= 0.99 then
+        state = "ATM"
+    elseif moneyness >= 0.95 then
+        state = "OTM Call / ITM Put"
+    else
+        state = "OTM Call / Deep ITM Put"
+    end
+
+    -- Check put-call parity violation
+    if parityDeviation / S > 0.01 then -- More than 1% deviation
+        state = state .. " [Parity Violation]"
+    end
+
+    return state
+end
+
+xllify.ExcelFunction({
+    name = "bs.State",
+    description = "Determine market state from Black-Scholes call and put prices",
+    parameters = {
+        {name="callPrice", description="Call option price"},
+        {name="putPrice", description="Put option price"},
+        {name="S", description="Current stock price"},
+        {name="K", description="Strike price"},
+        {name="T", description="Time to expiration (years)"},
+        {name="r", description="Risk-free interest rate"}
+    }
+ },
+    function (callPrice: number, putPrice: number, S: number, K: number, T: number, r: number): string
+        return getMarketState(callPrice, putPrice, S, K, T, r)
     end
 )
