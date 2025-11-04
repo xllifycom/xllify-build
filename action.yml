@@ -9,7 +9,7 @@ inputs:
   xllify_version:
     description: "Version of xllify to use"
     required: false
-    default: "0.5.1"
+    default: "0.5.2"
   xllify_key:
     description: "License key for xllify"
     required: false
@@ -58,8 +58,10 @@ runs:
       run: |
         # Stamp
         echo "${{ inputs.luau_scripts }}"
-        mv template.xll tools
+        ls xllify-dist
         SCRIPTS=$(echo "${{ inputs.luau_scripts }}" | tr '\n' ' ')
-        tools/xll-stamp "${{ inputs.xll_filename }}" $SCRIPTS
+        echo $SCRIPTS
+        xllify-dist/tools/xll-stamp "${{ inputs.xll_filename }}" $SCRIPTS
         echo "xll_path=${{ inputs.xll_filename }}.xll" >> $GITHUB_OUTPUT
         echo "Stamped XLL: ${{ inputs.xll_filename }}.xll"
+        rm -rf xllify-dist
