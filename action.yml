@@ -53,7 +53,8 @@ runs:
         unzip -q "$FILENAME" -d xllify-dist
         echo "XLLIFY_DIST_PATH=${{ github.workspace }}/xllify-dist" >> $GITHUB_ENV
 
-    - name: xllify
+    - name: xllify Compile
+      id: xllify
       shell: bash
       run: |
         # Stamp
@@ -62,4 +63,5 @@ runs:
         xllify-dist/tools/xll-stamp ${{ inputs.xll_filename }}.xll $SCRIPTS
         echo "xll_path=${{ inputs.xll_filename }}.xll" >> $GITHUB_OUTPUT
         echo "Stamped XLL: ${{ inputs.xll_filename }}.xll"
-        rm -rf xllify-dist
+        ls
+        echo "xll_path=${{ inputs.xll_filename }}.xll" >> $GITHUB_OUTPUT
