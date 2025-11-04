@@ -54,7 +54,7 @@ runs:
         echo "XLLIFY_DIST_PATH=${{ github.workspace }}/xllify-dist" >> $GITHUB_ENV
 
     - name: xllify Compile
-      id: xllify
+      id: build
       shell: bash
       run: |
         # Stamp
