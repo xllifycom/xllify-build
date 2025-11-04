@@ -9,7 +9,7 @@ inputs:
   xllify_version:
     description: "Version of xllify to use"
     required: false
-    default: "0.4.15"
+    default: "0.5.1"
   xllify_key:
     description: "License key for xllify"
     required: false
@@ -37,6 +37,11 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Set up environment
+      shell: bash
+      run: |
+        echo "XLLIFY_KEY=${{ inputs.xllify_key }}" >> $GITHUB_ENV
+
     - name: Download and extract xllify distribution
       shell: bash
       run: |
@@ -48,92 +53,13 @@ runs:
         unzip -q "$FILENAME" -d xllify-dist
         echo "XLLIFY_DIST_PATH=${{ github.workspace }}/xllify-dist" >> $GITHUB_ENV
 
-    - name: Set up environment
+    - name: xllify
       shell: bash
       run: |
-        echo "XLLIFY_KEY=${{ inputs.xllify_key }}" >> $GITHUB_ENV
-
-    - name: Configure CMake
-      shell: bash
-      working-directory: ${{ github.workspace }}
-      run: |
-        # Configure
-        WORKSPACE="${{ github.workspace }}"
-        WORKSPACE_UNIX="${WORKSPACE//\\//}"
-        echo "WORKSPACE_UNIX=$WORKSPACE_UNIX" >> $GITHUB_ENV
-
-        SCRIPTS="${{ inputs.luau_scripts }}"
-        SCRIPT_PATHS=""
-        for script in $SCRIPTS; do
-          SCRIPT_PATHS="$SCRIPT_PATHS    $WORKSPACE_UNIX/$script"$'\n'
-        done
-
-        # Create CMakeLists.txt with provided parameters
-        cat > CMakeLists.txt << 'EOF'
-        cmake_minimum_required(VERSION 3.18)
-        project(${{ inputs.addin_name }} VERSION 1.0.0 LANGUAGES CXX C)
-        EOF
-
-        cat >> CMakeLists.txt << EOF
-        # Set the path to the xllify distribution
-        set(CMAKE_PREFIX_PATH "${WORKSPACE_UNIX}/xllify-dist")
-        EOF
-
-        cat >> CMakeLists.txt << 'EOF'
-        # Find the xllify package
-        find_package(Xllify REQUIRED)
-
-        # Add your Luau scripts
-        xllify_add_scripts(
-        EOF
-
-        # Add script paths
-        echo "$SCRIPT_PATHS" >> CMakeLists.txt
-
-        # Complete the CMakeLists.txt
-        cat >> CMakeLists.txt << 'EOF'
-        )
-
-        # Build the Excel add-in (XLL)
-        xllify_build_xll(${{ inputs.xll_filename }})
-        EOF
-
-        # Create build directory
-        mkdir -p build
-        cd build
-        cmake ..
-
-    - name: Build XLL
-      id: build
-      shell: bash
-      working-directory: ${{ github.workspace }}
-      run: |
-        # Build XLL
-        cd build
-        cmake --build . --config Release
-
-        # Find the generated XLL file in build/Release/
-        XLL_FILE=$(find . -name "${{ inputs.xll_filename }}.xll" | head -n 1)
-
-        if [ -z "$XLL_FILE" ]; then
-          echo "Error: XLL file not found"
-          exit 1
-        fi
-
-        # Copy XLL to workspace root
-        cp "$XLL_FILE" ../${{ inputs.xll_filename }}.xll
-
-        # Set output path (relative to workspace)
+        # Stamp
+        echo "${{ inputs.luau_scripts }}"
+        mv template.xll tools
+        SCRIPTS=$(echo "${{ inputs.luau_scripts }}" | tr '\n' ' ')
+        tools/xll-stamp "${{ inputs.xll_filename }}" $SCRIPTS
         echo "xll_path=${{ inputs.xll_filename }}.xll" >> $GITHUB_OUTPUT
-
-        echo "Built XLL: ${{ inputs.xll_filename }}.xll"
-
-    - name: Clean up build directory
-      shell: bash
-      working-directory: ${{ github.workspace }}
-      if: always()
-      run: |
-        # Tidy up
-        rm -rf build
-        rm -rf "${{ github.workspace }}/xllify-dist"
-        echo "Build directory cleaned"
+        echo "Stamped XLL: ${{ inputs.xll_filename }}.xll"
