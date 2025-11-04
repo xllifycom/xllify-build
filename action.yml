@@ -58,10 +58,8 @@ runs:
       shell: bash
       run: |
         # Stamp
-        echo "${{ inputs.luau_scripts }}"
         SCRIPTS=$(echo "${{ inputs.luau_scripts }}" | tr '\n' ' ')
         xllify-dist/tools/xll-stamp ${{ inputs.xll_filename }}.xll $SCRIPTS
         echo "xll_path=${{ inputs.xll_filename }}.xll" >> $GITHUB_OUTPUT
         echo "Stamped XLL: ${{ inputs.xll_filename }}.xll"
-        ls
         echo "xll_path=${{ inputs.xll_filename }}.xll" >> $GITHUB_OUTPUT
