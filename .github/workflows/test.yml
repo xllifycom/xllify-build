@@ -31,5 +31,5 @@ jobs:
       - name: Upload XLL artifact
         uses: actions/upload-artifact@v4
         with:
-          name: hello
+          name: bs.zip
           path: ${{ steps.xllify.outputs.xll_path }}
