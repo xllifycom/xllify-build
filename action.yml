@@ -9,7 +9,7 @@ inputs:
   xllify_version:
     description: "Version of xllify distribution to use"
     required: false
-    default: "0.5.2"
+    default: "0.7.7"
   xllify_key:
     description: "License key for xllify"
     required: false
@@ -98,6 +98,6 @@ runs:
           pip install xllify
         fi
 
-        # Execute the command
+        echo $CMD
         eval $CMD
         echo "xll_path=$XLL_FILENAME" >> $GITHUB_OUTPUT
