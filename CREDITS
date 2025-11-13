@@ -90,7 +90,21 @@ only. Users of this distribution must comply with the respective licenses.
 
 -------------------------------------------------------------------------------
 
-4. MICROSOFT EXCEL SDK
+4. ZEROMQ (libzmq)
+   Description: High-performance asynchronous messaging library
+   Copyright: (c) 2007-2025 iMatix Corporation and Contributors
+   License: Mozilla Public License Version 2.0 (MPL-2.0)
+   Website: https://zeromq.org/
+
+   This Source Code Form is subject to the terms of the Mozilla Public
+   License, v. 2.0. If a copy of the MPL was not distributed with this
+   file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+   Full license text: https://github.com/zeromq/libzmq/blob/master/LICENSE
+
+-------------------------------------------------------------------------------
+
+5. MICROSOFT EXCEL SDK
    Description: Excel XLL SDK headers and libraries
    Copyright: Microsoft Corporation
    License: Proprietary (Microsoft)
@@ -103,8 +117,8 @@ only. Users of this distribution must comply with the respective licenses.
 DISTRIBUTION NOTICE
 -------------------
 
-All libraries included in this distribution are provided in binary form only
-(compiled libraries, headers, and tools). Source code is not included.
+The libraries listed above are used to build the xllify tool. No third-party
+libraries are included in this distribution - only the compiled xllify binary.
 
 Users of this distribution must:
 1. Comply with all third-party licenses listed above

@@ -1,13 +1,13 @@
 name: xllify Build
-description: Builds Excel custom functions from .luau to .xll
-author: Acornsoft UK
+description: Builds an Excel custom function add-in from .luau and .py scripts
+author: xllifycom
 branding:
   icon: "package"
   color: "green"
 
 inputs:
   xllify_version:
-    description: "Version of xllify to use"
+    description: "Version of xllify distribution to use"
     required: false
     default: "0.5.2"
   xllify_key:
@@ -22,9 +22,12 @@ inputs:
     description: "Internal name for the add-in project"
     required: false
     default: MyAddin
-  luau_scripts:
-    description: "Space or newline separated list of Luau script filenames"
+  embed_scripts:
+    description: "Space or newline separated list of .luau and/or .py script filenames"
     required: true
+  python_entrypoint:
+    description: "Name of Python entrypoint, will default to main.py"
+    required: false
 
 outputs:
   xll_path:
@@ -42,7 +45,7 @@ runs:
       run: |
         echo "XLLIFY_KEY=${{ inputs.xllify_key }}" >> $GITHUB_ENV
 
-    - name: Download and extract xllify distribution
+    - name: Install xllify
       shell: bash
       run: |
         # Download and extract xllify distribution
@@ -53,13 +56,25 @@ runs:
         unzip -q "$FILENAME" -d xllify-dist
         echo "XLLIFY_DIST_PATH=${{ github.workspace }}/xllify-dist" >> $GITHUB_ENV
 
-    - name: xllify Compile
+    - name: xllify
       id: build
       shell: bash
       run: |
-        # Stamp
-        SCRIPTS=$(echo "${{ inputs.luau_scripts }}" | tr '\n' ' ')
-        xllify-dist/tools/xll-stamp ${{ inputs.xll_filename }}.xll $SCRIPTS
-        echo "xll_path=${{ inputs.xll_filename }}.xll" >> $GITHUB_OUTPUT
-        echo "Stamped XLL: ${{ inputs.xll_filename }}.xll"
-        echo "xll_path=${{ inputs.xll_filename }}.xll" >> $GITHUB_OUTPUT
+        # xllify
+        SCRIPTS=$(echo "${{ inputs.embed_scripts }}" | tr '\n' ' ')
+        PY_ENTRYPOINT="${{ inputs.python_entrypoint }}"
+        XLL_FILENAME="${{ inputs.xll_filename }}"
+
+        # Ensure XLL_FILENAME ends with .xll
+        if [[ "$XLL_FILENAME" != *.xll ]]; then
+          XLL_FILENAME="${XLL_FILENAME}.xll"
+        fi
+
+        # Build xllify command with conditional --py-entrypoint flag
+        # Will default to main
+        if [[ "$SCRIPTS" == *".py"* && -n "$PY_ENTRYPOINT" ]]; then
+          xllify-dist/xllify "$XLL_FILENAME" $SCRIPTS --py-entrypoint "$PY_ENTRYPOINT"
+        else
+          xllify-dist/xllify "$XLL_FILENAME" $SCRIPTS
+        fi
+        echo "xll_path=$XLL_FILENAME" >> $GITHUB_OUTPUT
