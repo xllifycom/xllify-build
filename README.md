@@ -1,6 +1,6 @@
 # xllify-build
 
-[xllify.com](https://xllify.com) is the easiest way to add very high performance custom functions to Microsoft Excel. It takes functions implemented as Luau scripts and compiles them into custom functions packaged as an .xll Excel add-in. You can sell, distribute and deploy this .xll however you wish.
+[xllify.com](https://xllify.com) is the easiest way to add very high performance custom functions to Microsoft Excel. It takes functions implemented as Luau and/or Python scripts and compiles them into custom functions packaged as an .xll Excel add-in. You can sell, distribute and deploy this .xll however you wish.
 
 Note that currently only Microsoft Excel on Windows is supported. Mac support will involve some (!) compromises, but may follow if there's demand.
 
@@ -35,8 +35,8 @@ jobs:
         id: xllify
         uses: acornsoftuk/xllify-build@v0.0.0 # use version
         with:
-          xll_filename: hello.xll
-          luau_scripts: |
+          xll_filename: hello
+          embed_scripts: |
             hello.luau
             the_answer.luau
             black_scholes.luau
@@ -48,21 +48,80 @@ jobs:
           files: ${{ steps.xllify.outputs.xll_path }}
 ```
 
+### Example with Python
+
+```yaml
+name: Build XLL Add-in with Python
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build XLL with xllify
+        id: xllify
+        uses: acornsoftuk/xllify-build@v0.0.0 # use version
+        with:
+          xll_filename: my_python_addin
+          embed_scripts: |
+            functions.py
+            helpers.py
+          python_entrypoint: main.py
+          python_requirements: requirements.txt
+          xllify_key: ${{ secrets.XLLIFY_KEY }}
+
+      - name: Upload XLL to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ steps.xllify.outputs.xll_path }}
+```
+
 ## Inputs
 
-### `xll_filename` (required)
+### `embed_scripts` (required)
 
-Output XLL filename (e.g., `my_addin.xll`).
+Space or newline-separated list of `.luau` and/or `.py` script file paths relative to your repository root.
 
-### `luau_scripts` (required)
+### `xll_filename` (optional)
 
-Space or newline-separated list of Luau file paths relative to your repository root.
+Name of the output XLL file (without extension). Defaults to `MyAddin`. The `.xll` extension will be added automatically if not provided.
+
+### `addin_name` (optional)
+
+Internal name for the add-in project. Defaults to `MyAddin`.
+
+### `xllify_version` (optional)
+
+Version of xllify distribution to use. Defaults to `0.5.2`.
+
+### `xllify_key` (optional)
+
+License key for xllify. Defaults to `early-adopter`.
+
+### `python_entrypoint` (optional)
+
+Name of Python entrypoint file. Only used when Python scripts are included in `embed_scripts`.
+
+### `python_requirements` (optional)
+
+Path to Python requirements.txt file. Only used when Python scripts are included in `embed_scripts`.
 
 ## Outputs
 
 ### `xll_path`
 
-Path to the built XLL file that has been downloaded to your workspace.
+Path to the built XLL file (relative to workspace).
+
+### `test_results_path`
+
+Path to test results XML file.
 
 ## Caveats
 

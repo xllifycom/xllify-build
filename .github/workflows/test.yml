@@ -23,7 +23,7 @@ jobs:
         with:
           xll_filename: hello
           xllify_version: 0.7.5
-          luau_scripts: |
+          embed_scripts: |
             hello.luau
             the_answer.luau
             black_scholes.luau

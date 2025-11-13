@@ -28,6 +28,9 @@ inputs:
   python_entrypoint:
     description: "Name of Python entrypoint, will default to main.py"
     required: false
+  python_requirements:
+    description: "Python requirements.txt"
+    required: false
 
 outputs:
   xll_path:
@@ -63,18 +66,33 @@ runs:
         # xllify
         SCRIPTS=$(echo "${{ inputs.embed_scripts }}" | tr '\n' ' ')
         PY_ENTRYPOINT="${{ inputs.python_entrypoint }}"
+        PY_REQUIREMENTS="${{ inputs.python_requirements }}"
         XLL_FILENAME="${{ inputs.xll_filename }}"
+
 
         # Ensure XLL_FILENAME ends with .xll
         if [[ "$XLL_FILENAME" != *.xll ]]; then
           XLL_FILENAME="${XLL_FILENAME}.xll"
         fi
 
-        # Build xllify command with conditional --py-entrypoint flag
-        # Will default to main
-        if [[ "$SCRIPTS" == *".py"* && -n "$PY_ENTRYPOINT" ]]; then
-          xllify-dist/xllify "$XLL_FILENAME" $SCRIPTS --py-entrypoint "$PY_ENTRYPOINT"
-        else
-          xllify-dist/xllify "$XLL_FILENAME" $SCRIPTS
+        # Rename requirements file if provided
+        if [[ -n "$PY_REQUIREMENTS" ]]; then
+          mv "$PY_REQUIREMENTS" requirements.txt
         fi
+
+        # Build xllify command
+        CMD="xllify-dist/xllify \"$XLL_FILENAME\" $SCRIPTS"
+
+        # Add --py-entrypoint flag if provided
+        if [[ "$SCRIPTS" == *".py"* && -n "$PY_ENTRYPOINT" ]]; then
+          CMD="$CMD --py-entrypoint \"$PY_ENTRYPOINT\""
+        fi
+
+        # Add --py-requirements flag if provided
+        if [[ -n "$PY_REQUIREMENTS" ]]; then
+          CMD="$CMD --py-requirements requirements.txt"
+        fi
+
+        # Execute the command
+        eval $CMD
         echo "xll_path=$XLL_FILENAME" >> $GITHUB_OUTPUT
