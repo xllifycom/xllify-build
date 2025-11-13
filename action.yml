@@ -93,6 +93,11 @@ runs:
           CMD="$CMD --py-requirements requirements.txt"
         fi
 
+        # Install xllify Python package if Python scripts are included
+        if [[ "$SCRIPTS" == *".py"* ]]; then
+          pip install xllify
+        fi
+
         # Execute the command
         eval $CMD
         echo "xll_path=$XLL_FILENAME" >> $GITHUB_OUTPUT
