@@ -22,7 +22,7 @@ jobs:
         uses: ./
         with:
           xll_filename: bs
-          xllify_version: 0.7.7
+          xllify_version: 0.8.0
           embed_scripts: |
             black_scholes.luau
             hello.luau
