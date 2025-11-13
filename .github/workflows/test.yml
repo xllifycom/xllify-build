@@ -21,13 +21,12 @@ jobs:
         id: xllify
         uses: ./
         with:
-          xll_filename: hello
-          xllify_version: 0.7.5
+          xll_filename: bs
+          xllify_version: 0.7.6
           embed_scripts: |
-            hello.luau
-            the_answer.luau
             black_scholes.luau
-          xllify_key: not-needed
+            hello.luau
+          xllify_key: earlyadopter
 
       - name: Upload XLL artifact
         uses: actions/upload-artifact@v4
