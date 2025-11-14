@@ -1,5 +1,5 @@
 name: xllify Build
-description: Builds an Excel custom function add-in from .luau and .py scripts
+description: Builds Excel custom function add-ins from .luau and .py scripts
 author: xllifycom
 branding:
   icon: "package"
@@ -9,7 +9,7 @@ inputs:
   xllify_version:
     description: "Version of xllify distribution to use"
     required: false
-    default: "0.8.0"
+    default: "0.8.1"
   xllify_key:
     description: "License key for xllify"
     required: false
@@ -85,7 +85,7 @@ runs:
 
         # Add --py-entrypoint flag if provided
         if [[ "$SCRIPTS" == *".py"* && -n "$PY_ENTRYPOINT" ]]; then
-          CMD="$CMD --py-entrypoint \"$PY_ENTRYPOINT\""
+          CMD="$CMD --py-entrypoint $PY_ENTRYPOINT"
         fi
 
         # Add --py-requirements flag if provided
@@ -98,6 +98,5 @@ runs:
           pip install xllify
         fi
 
-        echo $CMD
         eval $CMD
         echo "xll_path=$XLL_FILENAME" >> $GITHUB_OUTPUT
