@@ -9,7 +9,7 @@ inputs:
   xllify_version:
     description: "Version of xllify distribution to use"
     required: false
-    default: "0.9.3"
+    default: "0.9.4"
   xllify_key:
     description: "License key for xllify"
     required: false
@@ -55,8 +55,7 @@ runs:
       shell: bash
       run: |
         # xllify
-        pip install --no-deps xllify==${{ inputs.xllify_version }}
-        pip install requests
+        pip install xllify==${{ inputs.xllify_version }}
         xllify-install > /dev/null
         
         SCRIPTS=$(echo "${{ inputs.embed_scripts }}" | tr '\n' ' ')
@@ -86,11 +85,6 @@ runs:
         # Add --py-requirements flag if provided
         if [[ -n "$PY_REQUIREMENTS" ]]; then
           CMD="$CMD --py-requirements requirements.txt"
-        fi
-
-        # Install xllify Python package if Python scripts are included
-        if [[ "$SCRIPTS" == *".py"* ]]; then
-          pip install xllify==0.9.3
         fi
 
         eval $CMD
