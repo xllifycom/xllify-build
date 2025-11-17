@@ -53,13 +53,8 @@ runs:
     - name: Install xllify
       shell: bash
       run: |
-        # Download and extract xllify distribution
-        VERSION="${{ inputs.xllify_version }}"
-        DOWNLOAD_URL="https://storage.googleapis.com/xllify-action-assets/xllify-dist-v${VERSION}-windows.zip"
-        FILENAME="xllify-dist-v${VERSION}-windows.zip"
-        curl -L -o "$FILENAME" "$DOWNLOAD_URL"
-        unzip -q "$FILENAME" -d xllify-dist
-        echo "XLLIFY_DIST_PATH=${{ github.workspace }}/xllify-dist" >> $GITHUB_ENV
+        pip install xllify==${{ inputs.xllify_version }}
+        xllify-install
 
     - name: xllify
       id: build
