@@ -50,17 +50,14 @@ runs:
     - uses: actions/setup-python@v4
       with:
         python-version: '3.12'
-    - name: Install xllify
-      shell: bash
-      run: |
-        pip install xllify==${{ inputs.xllify_version }}
-        xllify-install
-
     - name: xllify
       id: build
       shell: bash
       run: |
         # xllify
+        pip install xllify==${{ inputs.xllify_version }}
+        xllify-install
+        
         SCRIPTS=$(echo "${{ inputs.embed_scripts }}" | tr '\n' ' ')
         PY_ENTRYPOINT="${{ inputs.python_entrypoint }}"
         PY_REQUIREMENTS="${{ inputs.python_requirements }}"
@@ -78,7 +75,7 @@ runs:
         fi
 
         # Build xllify command
-        CMD="xllify-dist/xllify \"$XLL_FILENAME\" $SCRIPTS"
+        CMD="xllify \"$XLL_FILENAME\" $SCRIPTS"
 
         # Add --py-entrypoint flag if provided
         if [[ "$SCRIPTS" == *".py"* && -n "$PY_ENTRYPOINT" ]]; then
