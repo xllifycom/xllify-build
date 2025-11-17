@@ -9,7 +9,7 @@ inputs:
   xllify_version:
     description: "Version of xllify distribution to use"
     required: false
-    default: "0.8.9"
+    default: "0.9.3"
   xllify_key:
     description: "License key for xllify"
     required: false
@@ -95,7 +95,7 @@ runs:
 
         # Install xllify Python package if Python scripts are included
         if [[ "$SCRIPTS" == *".py"* ]]; then
-          pip install xllify
+          pip install xllify==0.9.3
         fi
 
         eval $CMD
