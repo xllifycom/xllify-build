@@ -47,7 +47,9 @@ runs:
       shell: bash
       run: |
         echo "XLLIFY_KEY=${{ inputs.xllify_key }}" >> $GITHUB_ENV
-
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
     - name: Install xllify
       shell: bash
       run: |
