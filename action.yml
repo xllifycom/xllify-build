@@ -55,8 +55,9 @@ runs:
       shell: bash
       run: |
         # xllify
-        pip install xllify==${{ inputs.xllify_version }}
-        xllify-install
+        pip install --no-deps xllify==${{ inputs.xllify_version }}
+        pip install requests
+        xllify-install > /dev/null
         
         SCRIPTS=$(echo "${{ inputs.embed_scripts }}" | tr '\n' ' ')
         PY_ENTRYPOINT="${{ inputs.python_entrypoint }}"
